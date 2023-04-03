@@ -38,7 +38,6 @@ class GameLogic:
             self.turn = Piece.White
         else:
             self.turn = Piece.Black
-            
 
     def plotTheBalls(self):
         # plot the ball at its selected region
