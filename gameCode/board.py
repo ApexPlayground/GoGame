@@ -1,62 +1,61 @@
-from collections import namedtuple
-from copy import copy
+from collections import namedtuple # import named tuple class from collections module
+from copy import copy # import copy function from copy module
 
-from PyQt6.QtWidgets import QFrame, QStatusBar, QMessageBox
-from PyQt6.QtCore import Qt, QBasicTimer, pyqtSignal, QPoint
-from PyQt6.QtGui import QPainter, QBrush, QColor
-from piece import Piece
-from balls import Balls
-from game_logic import GameLogic
+from PyQt6.QtWidgets import QFrame, QStatusBar, QMessageBox # import QFrame, QStatusBar, QMessageBox classes from PyQt6.QtWidgets module
+from PyQt6.QtCore import Qt, QBasicTimer, pyqtSignal, QPoint # import Qt, QBasicTimer, pyqtSignal, QPoint classes from PyQt6.QtCore module
+from PyQt6.QtGui import QPainter, QBrush, QColor # import QPainter, QBrush, QColor classes from PyQt6.QtGui module
+from piece import Piece # import Piece class from piece module
+from balls import Balls # import Balls class from balls module
+from game_logic import GameLogic # import GameLogic class from game_logic module
 
-
-class Board(QFrame):
+class Board(QFrame): # define a Board class inheriting QFrame
     boardWidth = 7  # board width
     boardHeight = 7  # board height
     timerSpeed = 1000  # timer set to 1 sec
     counter = 120  # countdown
     gamelogic = GameLogic()  # getting game logic class
-    passcount = 0
-    listenToTime = pyqtSignal(int)
-    listenToClick = pyqtSignal(str)
-    captives = pyqtSignal(str, int)
-    territories = pyqtSignal(str, int)
-    notifier = pyqtSignal(str)
-    playerTurn = pyqtSignal(int)
+    passcount = 0 # setting the pass count to 0
+    listenToTime = pyqtSignal(int) # signal for time
+    listenToClick = pyqtSignal(str) # signal for click
+    captives = pyqtSignal(str, int) # signal for captives
+    territories = pyqtSignal(str, int) # signal for territories
+    notifier = pyqtSignal(str) # signal for notifications
+    playerTurn = pyqtSignal(int) # signal for player's turn
 
     def __init__(self, parent):
-        super().__init__(parent)
-        self.boardArray = None
-        self.isStarted = None
-        self.timer = None
-        self.initBoard()
+        super().__init__(parent) # calling super constructor of parent class
+        self.boardArray = None # initialize boardArray to None
+        self.isStarted = None # initialize isStarted to None
+        self.timer = None # initialize timer to None
+        self.initBoard() # call initBoard function
         self.__gameState__ = []  # array to store state of the game
 
     def initBoard(self):
-        self.timer = QBasicTimer()
-        self.isStarted = False
-        self.start()
-        self.boardArray = [[Balls(Piece.NoPiece, i, j) for i in range(self.boardWidth)] for j in
-                           range(self.boardHeight)]
-        self.gamelogic = GameLogic()
-        self.printBoardArray()
+        self.timer = QBasicTimer() # create a timer instance
+        self.isStarted = False # set isStarted to False
+        self.start() # call start function
+        self.boardArray = [[Balls(Piece.NoPiece, i, j) for i in range(self.boardWidth)] for j in range(self.boardHeight)] # create a 2D array of board, each element is a Balls instance
+        self.gamelogic = GameLogic() # create a GameLogic instance
+        self.printBoardArray() # call printBoardArray function to print the board array
 
     def printBoardArray(self):
         '''prints the boardArray in an attractive way'''
         print("boardArray:")
-        print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in self.boardArray]))
+        print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in self.boardArray])) # print the boardArray element by element with tabs and line breaks
 
     def squareWidth(self):
-        return self.contentsRect().width() / self.boardWidth
+        return self.contentsRect().width() / self.boardWidth # return the width of each square on the board
 
     def squareHeight(self):
-        return self.contentsRect().height() / self.boardHeight
+        return self.contentsRect().height() / self.boardHeight # return the height of each square on the board
 
     def start(self):
         # Start the game
-        self.isStarted = True
-        self.resetGame()
-        self.timer.start(self.timerSpeed, self)
+        self.isStarted = True # set isStarted to True
+        self.resetGame() # call resetGame function
+        self.timer.start(self.timerSpeed, self) # start the timer with the given speed and the current instance as the event receiver
         print("start () - timer is started")
+
 
     def timerEvent(self, event):
         if event.timerId() == self.timer.timerId():  # if the timer that has 'ticked' is the one in this class
